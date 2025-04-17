@@ -53,3 +53,4 @@ dist-ssr/
 # Other files to ignore
 *.bak
 *.tmp
+.vercel
