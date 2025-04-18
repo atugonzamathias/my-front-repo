@@ -3,7 +3,6 @@ import logo from "../../assets/logo.jpg";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-console.log("Login page loaded");
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -27,22 +26,28 @@ function Login() {
     setError(null);
 
     try {
-      const response = await API.post(
-        "api/auth/login/",
-        formData,
-      );
-
+      const response = await API.post("api/auth/login/", formData);
       console.log("Login successful:", response.data);
-      navigate("/dashbord"); // Redirect to the dashboard or any other page after login
 
-      // For session auth, you don't need to store a token
-      // The browser will automatically handle the session cookie
+      const role = response.data.role;
+
+      // Redirect based on user role
+      if (role === "student") {
+        navigate("/student-dashboard");
+      } else if (role === "lecturer") {
+        navigate("/lecturer-dashboard");
+      } else if (role === "registrar") {
+        navigate("/registrar-dashboard");
+      } else {
+        navigate("/unknown-role"); // fallback
+      }
+
     } catch (err) {
       console.error("Login failed:", err);
-      setError(
-        err.response?.data?.message || "Login failed. Please try again."
-      );
-    } 
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,80 +58,58 @@ function Login() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm text-left font-medium text-gray-600"
-              >
+              <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-600">
                 User Name
               </label>
               <input
                 type="text"
                 id="name"
                 name="name"
-                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 value={formData.name}
-                placeholder="Enter your User Name"
                 onChange={handleChange}
                 required
+                placeholder="Enter your User Name"
+                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg block w-full p-2.5"
               />
             </div>
+
             <div>
-              <label
-                htmlFor="password"
-                className="block mb-2 text-sm text-left font-medium text-gray-900"
-              >
+              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
                 Password
               </label>
               <input
                 type="password"
                 id="password"
                 name="password"
-                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 value={formData.password}
-                placeholder="Enter your password"
                 onChange={handleChange}
                 required
+                placeholder="Enter your password"
+                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg block w-full p-2.5"
               />
             </div>
-            {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+
+            {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+
             <button
               type="submit"
               disabled={loading}
-              className="text-white mt-4 mb-4 bg-blue-950 w-79 hover:bg-blue-950 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center"
+              className="text-white mt-4 bg-blue-950 hover:bg-blue-800 font-medium rounded-lg text-sm p-2.5 w-full"
             >
               {loading ? "LOGGING IN..." : "L O G I N"}
             </button>
           </form>
-          <div>
-            <div className="flex items-start mb-5">
-              <label
-                htmlFor="terms"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                You don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="text-blue-600 hover:underline dark:text-blue-500"
-                >
-                  Register
-                </Link>
-                <Link
-                  to="/forgot-password"
-                  className="text-red-600 hover:underline dark:text-Green-500 ms-2"
-                >
-                  Forgot Password?
-                </Link>
-                <Link
-                  
-                    to="/"
-                    className="text-blue-600 hover:underline dark:text-Red-500 ms-2"
-                >
-                  LOGOUT
-                </Link>
-              </label>
-            </div>
+
+          <div className="flex items-start mt-4">
+            <label className="text-sm font-medium text-gray-900">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
+              <Link to="/forgot-password" className="text-red-600 hover:underline ml-2">Forgot Password?</Link>
+              <Link to="/" className="text-blue-600 hover:underline ml-2">Logout</Link>
+            </label>
           </div>
         </div>
+
         <div className="hidden md:block bg-green-300 rounded-lg overflow-hidden">
           <img src={logo} alt="logo" className="h-full w-80 grayscale-100" />
         </div>

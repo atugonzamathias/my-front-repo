@@ -1,7 +1,10 @@
 import API from "../../API";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 👈 import useNavigate
+
 export default function RegisterForm() {
+  const navigate = useNavigate(); // 👈 initialize navigate
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -28,18 +31,13 @@ export default function RegisterForm() {
     setIsSubmitting(true);
     setError(null);
 
-    // Create a copy of the form data to send, removing unused fields
     const dataToSend = { ...formData };
 
-    // Remove irrelevant fields based on role
     if (formData.role === "student") {
-      // Keep user_number and registration_number, remove fields not relevant to students
-      delete dataToSend.lecturer_number; // Remove any irrelevant fields
+      delete dataToSend.lecturer_number;
     } else if (formData.role === "lecturer") {
-      // Keep only user_number for lecturers, remove registration_number and any other irrelevant fields
       delete dataToSend.registration_number;
     } else if (formData.role === "registrar") {
-      // Registrars have no user_number or registration_number, so we don't add those fields
       delete dataToSend.user_number;
       delete dataToSend.registration_number;
     }
@@ -47,6 +45,15 @@ export default function RegisterForm() {
     try {
       const response = await API.post("/api/auth/register/", dataToSend);
       setSuccess(true);
+
+      // 👇 Redirect to dashboard based on role
+      if (formData.role === "student") {
+        navigate("/student-dashboard");
+      } else if (formData.role === "lecturer") {
+        navigate("/lecturer-dashboard");
+      } else if (formData.role === "registrar") {
+        navigate("/registrar-dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     } finally {
@@ -66,16 +73,12 @@ export default function RegisterForm() {
     "KAES",
   ];
 
-  // Render role-specific fields based on selected role
   const renderRoleSpecificFields = () => {
     if (formData.role === "student") {
       return (
         <>
           <div className="space-y-2">
-            <label
-              htmlFor="user_number"
-              className="block text-sm font-medium"
-            >
+            <label htmlFor="user_number" className="block text-sm font-medium">
               Student Number
             </label>
             <input
@@ -110,10 +113,7 @@ export default function RegisterForm() {
     } else if (formData.role === "lecturer") {
       return (
         <div className="space-y-2">
-          <label
-            htmlFor="user_number"
-            className="block text-sm font-medium"
-          >
+          <label htmlFor="user_number" className="block text-sm font-medium">
             Lecturer Number
           </label>
           <input
@@ -128,13 +128,10 @@ export default function RegisterForm() {
         </div>
       );
     } else if (formData.role === "registrar") {
-      // No additional fields for registrars
       return null;
-  }
-
-  return null;
-};
-  
+    }
+    return null;
+  };
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -142,7 +139,7 @@ export default function RegisterForm() {
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         {success ? (
           <div className="p-4 bg-green-50 text-green-700 rounded-md">
-            Registration successful! You can now log in.
+            Registration successful! Redirecting...
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -264,7 +261,6 @@ export default function RegisterForm() {
               </select>
             </div>
 
-            {/* Conditional fields based on role */}
             {renderRoleSpecificFields()}
 
             <div className="space-y-2">
@@ -318,4 +314,3 @@ export default function RegisterForm() {
     </div>
   );
 }
-
