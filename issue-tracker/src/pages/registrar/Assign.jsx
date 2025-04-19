@@ -18,7 +18,7 @@ const Assign = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await API.post("/api/issues/assign/", formData);
+            const response = await API.PATCH("/api/issues/{issue_id}/assign/", formData);
             console.log("Success!", response.data);
         }
         catch (err) {
