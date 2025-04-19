@@ -33,11 +33,11 @@ function Login() {
 
       // Redirect based on user role
       if (role === "student") {
-        navigate("/student-dashboard");
+        navigate("/studdash");
       } else if (role === "lecturer") {
-        navigate("/lecturer-dashboard");
+        navigate("/lectdash");
       } else if (role === "registrar") {
-        navigate("/registrar-dashboard");
+        navigate("/regdash");
       } else {
         navigate("/unknown-role"); // fallback
       }

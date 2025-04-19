@@ -12,19 +12,20 @@ import Dashbord from "./pages/students/Dashbord.jsx";
 import Submission from "./pages/students/Submission.jsx";
 import Issues from "./pages/students/issues.jsx";
 import Profile from "./pages/students/Profile.jsx";
-import Notifications from "./pages/notifications.jsx";
 import Profsettings from "./pages/auth/Profsettings.jsx";
 import Selectrole from "./pages/auth/Selectrole.jsx";
 import Home from "./pages/Home.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
+import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
+import NotificationsPage from "./pages/notificationPage.jsx"; 
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        <Route path="dashbord/" element={<Dashbord />} />
+        <Route path="studdash/" element={<Dashbord />} />
         <Route path="login/" element={<Login />} />
         <Route path="register/" element={<Register />} />
         <Route path="issues/" element={<Issues />} />
@@ -34,10 +35,11 @@ createRoot(document.getElementById("root")).render(
         <Route path="assign/" element={<Assign />} />
         <Route path="profsettings/" element={<Profsettings />} />
         <Route path="selectrole/" element={<Selectrole />} />
-        <Route path="notifications/" element={<Notifications />} />
         <Route path="/" element={<Home />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+        <Route path="/lectdash" element={<LecturerDashboard />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

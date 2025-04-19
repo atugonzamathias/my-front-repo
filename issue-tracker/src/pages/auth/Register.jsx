@@ -48,11 +48,11 @@ export default function RegisterForm() {
 
       // 👇 Redirect to dashboard based on role
       if (formData.role === "student") {
-        navigate("/student-dashboard");
+        navigate("/studdash");
       } else if (formData.role === "lecturer") {
-        navigate("/lecturer-dashboard");
+        navigate("/lectdash");
       } else if (formData.role === "registrar") {
-        navigate("/registrar-dashboard");
+        navigate("/regdash");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
