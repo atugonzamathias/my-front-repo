@@ -14,7 +14,7 @@ import Issues from "./pages/students/issues.jsx";
 import Profile from "./pages/students/Profile.jsx";
 import Profsettings from "./pages/auth/Profsettings.jsx";
 import Selectrole from "./pages/auth/Selectrole.jsx";
-import Home from "./pages/Home.jsx";
+import Home from "./pages/home.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
