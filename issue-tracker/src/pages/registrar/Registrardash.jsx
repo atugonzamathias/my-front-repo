@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import LogoutButton from "../../components/LogoutButton";
 import BackArrow from '../../components/BackArrow';
-import NotificationBell from '@/components/NotificationBell';
+import NotificationBell from '../../components/NotificationBell';
 import API from "../../API/";
 
 const AcademicRegistrarDashboard = () => {
@@ -36,8 +36,8 @@ const AcademicRegistrarDashboard = () => {
       if (typeFilter !== "All Types") params.issue_type = typeFilter;
       if (searchQuery) params.search = searchQuery;
       const response = await API.get("/api/issues/", { params });
-      setAllIssues(response.data);
-      setFilteredIssues(response.data);
+      setAllIssues(response.data.results);
+      setFilteredIssues(response.data.results);
     } catch (error) {
       console.error("Error fetching issues:", error);
     }
@@ -93,8 +93,8 @@ const AcademicRegistrarDashboard = () => {
 
   // Ensure filteredIssues is always an array
   const issuesArray = Array.isArray(filteredIssues)
-    ? filteredIssues
-    : Object.values(filteredIssues) || []; // Convert object to array if necessary
+    ? filteredIssues 
+    : Object.values(filteredIssues ?? {}); // Use empty object if null/undefined
 
   return (
     <div className="m-2">
@@ -210,8 +210,8 @@ const AcademicRegistrarDashboard = () => {
                 >
                   <option>All Types</option>
                   <option>Missing Marks</option>
-                  <option>Appeals</option>
-                  <option>Corrections</option>
+                  <option>Appeal</option>
+                  <option>Correction</option>
                 </select>
               </div>
               <div>
@@ -253,7 +253,7 @@ const AcademicRegistrarDashboard = () => {
                     <tr key={issue.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">{issue.id}</td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{issue.student.name}</div>
+                        <div className="text-sm text-gray-900">{issue.student}</div>
                         <div className="text-sm text-gray-500">{issue.student.id}</div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">{issue.subject}</td>

@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/button';
-import { Input } from '@/components/input';
+import { Button } from '../../components/button';
+import { Input } from '../../components/input';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/select';
+} from '../../components/select';
 import { ArrowLeft, User } from 'lucide-react';
-import Card, { CardContent } from '@/components/Cards';
+import Card, { CardContent } from "../../components/cards";
 import API from '../../API';
-import NotificationBell from '@/components/NotificationBell';
+import NotificationBell from '../../components/NotificationBell';
 import LogoutButton from '../../components/LogoutButton';
-
 
 const LecturerDashboard = () => {
   const [issues, setIssues] = useState([]);
@@ -22,22 +21,30 @@ const LecturerDashboard = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [search, setSearch] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const issuesPerPage = 5;
 
   useEffect(() => {
     fetchIssues();
   }, []);
 
   const fetchIssues = async () => {
+    setLoading(true);
     try {
       const res = await API.get('/api/issues/?status=assigned');
-      setIssues(res.data);
-      setFilteredIssues(res.data);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setIssues(data);
+      setFilteredIssues(data);
       setError(null);
     } catch (error) {
       console.error('Failed to fetch issues:', error);
       setError(
         'Unable to fetch issues. Please check your connection or contact the admin.'
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,6 +72,7 @@ const LecturerDashboard = () => {
 
   useEffect(() => {
     applyFilters();
+    setCurrentPage(1); // Reset to first page on filter change
   }, [statusFilter, typeFilter, search]);
 
   const stats = {
@@ -73,6 +81,12 @@ const LecturerDashboard = () => {
     in_progress: issues.filter((i) => i.status === 'in_progress').length,
     pending: issues.filter((i) => i.status !== 'resolved').length,
   };
+
+  // Pagination
+  const indexOfLast = currentPage * issuesPerPage;
+  const indexOfFirst = indexOfLast - issuesPerPage;
+  const currentIssues = filteredIssues.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredIssues.length / issuesPerPage);
 
   return (
     <div className="p-6 space-y-6">
@@ -157,55 +171,88 @@ const LecturerDashboard = () => {
         </Select>
       </div>
 
+      {/* Loading spinner */}
+      {loading && (
+        <div className="flex justify-center items-center p-6">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+
       {/* Issues Table */}
-      <div className="overflow-auto">
-        <table className="min-w-full text-left border border-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2">Title</th>
-              <th className="p-2">Type</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredIssues.map((issue) => (
-              <tr key={issue.id} className="border-t">
-                <td className="p-2">{issue.title}</td>
-                <td className="p-2 capitalize">
-                  {issue.issue_type.replace('_', ' ')}
-                </td>
-                <td className="p-2 capitalize">
-                  {issue.status.replace('_', ' ')}
-                </td>
-                <td className="p-2 space-x-2">
-                  {issue.status !== 'resolved' && (
-                    <>
-                      <Button
-                        onClick={() =>
-                          handleStatusChange(issue.id, 'in_progress')
-                        }
-                        variant="outline"
-                        size="sm"
-                      >
-                        In Progress
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          handleStatusChange(issue.id, 'resolved')
-                        }
-                        size="sm"
-                      >
-                        Resolve
-                      </Button>
-                    </>
-                  )}
-                </td>
+      {!loading && (
+        <div className="overflow-auto">
+          <table className="min-w-full text-left border border-gray-200">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2">Title</th>
+                <th className="p-2">Type</th>
+                <th className="p-2">Status</th>
+                <th className="p-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {currentIssues.length > 0 ? (
+                currentIssues.map((issue) => (
+                  <tr key={issue.id} className="border-t">
+                    <td className="p-2">{issue.title}</td>
+                    <td className="p-2 capitalize">
+                      {issue.issue_type.replace('_', ' ')}
+                    </td>
+                    <td className="p-2 capitalize">
+                      {issue.status.replace('_', ' ')}
+                    </td>
+                    <td className="p-2 space-x-2">
+                      {issue.status !== 'resolved' && (
+                        <>
+                          <Button
+                            onClick={() =>
+                              handleStatusChange(issue.id, 'in_progress')
+                            }
+                            variant="outline"
+                            size="sm"
+                          >
+                            In Progress
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              handleStatusChange(issue.id, 'resolved')
+                            }
+                            size="sm"
+                          >
+                            Resolve
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="p-4 text-center">
+                    No issues found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4 space-x-2">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <Button
+                  key={i + 1}
+                  variant={currentPage === i + 1 ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </Button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
