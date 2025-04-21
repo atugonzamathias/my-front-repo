@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Wrapper from '../../components/wrapper'
-import Cards from '../../components/cards'
+import Card from '../../components/Cards'
 import api from '../../API'
 import { useAuth } from '../../context/AuthContext'
 
