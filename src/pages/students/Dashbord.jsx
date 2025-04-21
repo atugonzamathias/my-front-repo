@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { User } from 'lucide-react';
-import Cards from '../../components/cards';
+import Card from '../../components/Cards';
 import Wrapper from '../../components/wrapper';
 import LogoutButton from '../../components/LogoutButton';
 import BackArrow from '../../components/BackArrow'; 
