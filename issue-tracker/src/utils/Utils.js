@@ -1,3 +1,4 @@
+import React from 'react';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
 export const tailwindConfig = () => {

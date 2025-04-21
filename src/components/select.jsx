@@ -1,4 +1,3 @@
-// src/components/select.jsx
 import React from 'react';
 
 const Select = ({ children, ...props }) => {
