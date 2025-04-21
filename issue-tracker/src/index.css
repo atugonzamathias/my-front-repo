@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.content-page {
+    font-size: 1.5rem; /* bigger font */
+    text-align: center; /* center the text */
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
