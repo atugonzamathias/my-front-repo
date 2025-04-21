@@ -9,7 +9,7 @@ import {
   SelectItem,
 } from '../../components/select';
 import { ArrowLeft, User } from 'lucide-react';
-import Card, { CardContent } from "../../components/cards";
+import Card, { CardContent } from "../../components/Cards";
 import API from '../../API';
 import NotificationBell from '../../components/NotificationBell';
 import LogoutButton from '../../components/LogoutButton';
