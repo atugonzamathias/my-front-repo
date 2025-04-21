@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar";
 import StudentDashboard from "./pages/students/Dashbord";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
-import Home from "./pages/Home"; // optional, in case you have one
+import Home from "./pages/Home"; 
 
 const App = () => {
   return (

@@ -21,6 +21,7 @@ import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
 import NotificationsPage from "./pages/NotificationPage.jsx"; 
 
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>

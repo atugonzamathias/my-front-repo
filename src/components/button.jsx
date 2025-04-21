@@ -1,4 +1,3 @@
-// src/components/button.jsx
 import React from 'react';
 
 const Button = ({ children, ...props }) => {

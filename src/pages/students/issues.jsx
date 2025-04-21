@@ -1,7 +1,8 @@
+import React from "react";
 import { useState, useEffect } from 'react'
 import Wrapper from '../../components/wrapper'
 import Card from '../../components/Cards'
-import API from '../../API'
+import api from '../../API'
 import { useAuth } from '../../context/AuthContext'
 
 const Issues = () => {
