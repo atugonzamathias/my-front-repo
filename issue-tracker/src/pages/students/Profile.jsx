@@ -1,7 +1,7 @@
-import API from "../../API";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react"; // Make sure to install lucide-react or use another icon library
+import API from "../../API";
 
 const ProfilePage = () => {
   const navigate = useNavigate();

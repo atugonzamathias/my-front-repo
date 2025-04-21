@@ -1,3 +1,4 @@
+import React from 'react';
 export class AppError extends Error {
   constructor(message, code, details) {
     super(message);

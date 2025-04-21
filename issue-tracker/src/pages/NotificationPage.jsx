@@ -1,4 +1,4 @@
-// src/pages/NotificationsPage.jsx
+import React from "react";
 import { useEffect, useState } from "react";
 import { getNotifications } from "./notifications";
 

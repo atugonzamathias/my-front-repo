@@ -1,3 +1,4 @@
+import React from "react";
 import API from "../API";
 
 export const getNotifications = async () => {

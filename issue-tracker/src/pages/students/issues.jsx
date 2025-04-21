@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from 'react'
 import Wrapper from '../../components/wrapper'
 import Card from '../../components/Cards'
