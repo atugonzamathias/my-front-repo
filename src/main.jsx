@@ -18,7 +18,7 @@ import Home from "./pages/home.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
-import NotificationsPage from "./pages/notificationPage.jsx"; 
+import NotificationsPage from "./pages/NotificationPage.jsx"; 
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
