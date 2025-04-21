@@ -8,7 +8,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',  // <-- VERY IMPORTANT FOR VERCEL
   server: {
     historyApiFallback: true
   },
