@@ -7,3 +7,8 @@
     max-width: 800px;
     margin: 0 auto;
   }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind screens;
