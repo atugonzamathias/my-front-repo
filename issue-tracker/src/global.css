@@ -265,4 +265,79 @@ tr:hover {
     color: #2563eb;
     margin: 0;
   }
+
+    /* Dashboard Header */
+  .dashboard-header {
+    background-color: #1e3a8a; /* Tailwind's blue-950 */
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dashboard-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+  }
+
+  .dashboard-subtitle {
+    font-size: 0.875rem;
+    color: #d1d5db;
+  }
+
+  /* Stats Grid and Card */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stats-card {
+    background-color: #1e3a8a;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    color: white;
+  }
+
+  .stats-info {
+    max-width: 75%;
+  }
+
+  .stats-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .stats-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 0.25rem;
+  }
+
+  .stats-note {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
+  }
+
+  .stats-icon-box {
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+  }
+
+  .stats-icon {
+    color: #4b5563;
+  }
+
 }
