@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import "./index.css";
 import Register from "./pages/auth/Register.jsx";
 import Login from "./pages/auth/login.jsx";
 import Assign from "./pages/registrar/Assign.jsx";
@@ -20,6 +19,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
 import NotificationsPage from "./pages/NotificationPage.jsx"; 
+import './global.css';
 
 
 createRoot(document.getElementById("root")).render(

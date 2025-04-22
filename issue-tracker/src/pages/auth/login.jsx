@@ -1,103 +1,102 @@
+import API from "../../API";
+import logo from "../../assets/logo.jpg";
 import React, { useState } from "react";
-import "../../global.css"; // Make sure the path is correct
-import logo from "../../assets/logo.jpg"; // Adjust path as needed
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
-  const [formData, setFormData] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+function Login() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ name: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    // Simulate login check (replace with real API call)
-    if (formData.username === "admin" && formData.password === "admin") {
-      navigate("/dashboard");
-    } else {
-      setError("Invalid username or password");
+    try {
+      const response = await API.post("api/auth/login/", formData);
+      const role = response.data.role;
+
+      if (role === "student") navigate("/studdash");
+      else if (role === "lecturer") navigate("/lectdash");
+      else if (role === "registrar") navigate("/regdash");
+      else navigate("/unknown-role");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* Left section with logo */}
+        {/* Logo Section */}
         <div className="logo-wrapper">
-          <img src={logo} alt="Logo" className="logo-image small-logo" />
+          <img src={logo} alt="logo" className="logo-image" />
         </div>
 
-        {/* Right section with form */}
+        {/* Form Section */}
         <div className="form-wrapper">
           <h2 className="form-title">Login</h2>
+
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username
-              </label>
+              <label htmlFor="name" className="form-label">User Name</label>
               <input
                 type="text"
-                id="username"
-                name="username"
-                value={formData.username}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                className="form-input"
-                placeholder="Enter your username"
                 required
+                placeholder="Enter your User Name"
+                className="form-input"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
+              <label htmlFor="password" className="form-label">Password</label>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="form-input"
-                placeholder="Enter your password"
                 required
+                placeholder="Enter your password"
+                className="form-input"
               />
-              <div style={{ textAlign: "right", marginTop: "5px" }}>
-                <input
-                  type="checkbox"
-                  id="showPassword"
-                  onChange={() => setShowPassword(!showPassword)}
-                />
-                <label htmlFor="showPassword" style={{ marginLeft: "5px" }}>
-                  Show Password
-                </label>
-              </div>
             </div>
 
             {error && <div className="form-error">{error}</div>}
 
-            <button type="submit" className="login-btn">
-              Login
+            <button type="submit" disabled={loading} className="login-btn">
+              {loading ? "LOGGING IN..." : "L O G I N"}
             </button>
           </form>
 
           <div className="form-footer">
-            Don't have an account?
-            <a href="/register" className="link">
-              Register here
-            </a>
+            <p>
+              Don't have an account? <Link to="/register" className="link">Register</Link>
+            </p>
+            <p>
+              <Link to="/Forgot-Password" className="link">ForgotPassword?</Link>
+            </p>
+            <p>
+              <Link to="/" className="link">Logout</Link>
+            </p>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default LoginPage;
+export default Login;

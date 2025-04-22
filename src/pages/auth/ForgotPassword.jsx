@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import API from "../../API";
 import { Link } from "react-router-dom";
 
@@ -19,38 +18,38 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-center mb-6">Forgot Password</h2>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          className="w-full border border-gray-300 p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
-        >
-          Send Reset Link
-        </button>
-        {message && (
-          <p className="mt-4 text-center text-sm text-gray-700">{message}</p>
-        )}
-        <div className="mt-6 text-center">
-          <Link
-            to="/login"
-            className="text-blue-600 hover:underline dark:text-blue-500"
-          >
-            Back Login
-          </Link>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="form-wrapper">
+          <h2 className="form-title">Forgot Password</h2>
+          <form onSubmit={handleSubmit} className="center-content">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
+                Enter your email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-input"
+                required
+              />
+            </div>
+            <button type="submit" className="login-btn">
+              Send Reset Link
+            </button>
+            {message && (
+              <p className="form-error mt-4 text-center">{message}</p>
+            )}
+          </form>
+          <div className="form-footer">
+            <Link to="/login" className="link">
+              Back to Login
+            </Link>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
