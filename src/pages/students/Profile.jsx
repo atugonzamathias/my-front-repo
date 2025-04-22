@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react"; // Make sure to install lucide-react or use another icon library
 import API from "../../API";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // assuming you use react-router
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -39,7 +39,6 @@ const ProfilePage = () => {
         setError("Failed to load profile.");
       }
     };
-
     fetchProfile();
   }, []);
 
@@ -65,7 +64,7 @@ const ProfilePage = () => {
       const formDataFile = new FormData();
       formDataFile.append("profile_picture", file);
       const response = await API.post(
-        "/api/profile/profile_picture/",
+        "/api/profile/profile-picture/",
         formDataFile,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -87,7 +86,7 @@ const ProfilePage = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await API.put("/api/profile/", formData);
+      const response = await API.patch("/api/profile/", formData);
       setUser((prev) => ({ ...prev, ...response.data }));
       setEditing(false);
     } catch (err) {
@@ -119,9 +118,9 @@ const ProfilePage = () => {
       setPasswordError("");
       setShowPasswordForm(false);
       setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        current_password: "",
+        new_password: "",
+        confirm_new_password: "",
       });
     } catch (err) {
       setPasswordError(
@@ -141,7 +140,6 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-      {/* Back Arrow */}
       <div className="mb-4 flex items-center gap-2 cursor-pointer text-blue-900" onClick={() => navigate(-1)}>
         <ArrowLeft size={20} />
         <span className="font-medium">Back</span>
@@ -166,11 +164,11 @@ const ProfilePage = () => {
           />
           <input
             type="file"
-            accept="image/jpeg, image/png"
+            accept="image/jpeg, image/png, image/jpg"
             onChange={handleProfilePictureChange}
             disabled={loading}
-            id="profile-picture-upload"
             className="hidden"
+            id="profile-picture-upload"
           />
           <label
             htmlFor="profile-picture-upload"
@@ -196,7 +194,7 @@ const ProfilePage = () => {
               value={formData.username}
               onChange={handleInputChange}
               disabled={loading}
-              className="mt-1 w-full px-3 py-2 border rounded shadow-sm"
+              className="mt-1 w-full p-2 border border-gray-300 rounded"
             />
           ) : (
             <p className="mt-1 text-sm">{user.username}</p>
@@ -212,7 +210,7 @@ const ProfilePage = () => {
               value={formData.email}
               onChange={handleInputChange}
               disabled={loading}
-              className="mt-1 w-full px-3 py-2 border rounded shadow-sm"
+              className="mt-1 w-full p-2 border border-gray-300 rounded"
             />
           ) : (
             <p className="mt-1 text-sm">{user.email}</p>
@@ -231,7 +229,7 @@ const ProfilePage = () => {
           </div>
         )}
 
-        <div className="flex gap-3 mt-4">
+        <div className="flex gap-4 mt-6">
           {editing ? (
             <button
               onClick={handleSave}
@@ -259,41 +257,41 @@ const ProfilePage = () => {
         </div>
 
         {showPasswordForm && (
-          <div className="mt-6 bg-gray-50 p-4 rounded">
-            <h3 className="text-lg font-semibold mb-3">Change Password</h3>
+          <div className="mt-6 p-4 bg-gray-50 rounded border">
+            <h3 className="text-lg font-medium mb-4">Change Password</h3>
             {passwordError && <p className="text-red-600 mb-2">{passwordError}</p>}
             {passwordSuccess && <p className="text-green-600 mb-2">{passwordSuccess}</p>}
-            <div className="flex flex-col gap-3">
-              {["currentPassword", "newPassword", "confirmPassword"].map((field) => (
-                <div key={field}>
-                  <label className="text-sm font-medium text-gray-700 capitalize">
-                    {field.replace(/([A-Z])/g, " $1")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword[field] ? "text" : "password"}
-                      name={field}
-                      value={passwordData[field]}
-                      onChange={handlePasswordChange}
-                      className="mt-1 w-full px-3 py-2 border rounded"
-                    />
-                    <span
-                      className="absolute right-2 top-3 text-sm text-blue-600 cursor-pointer"
-                      onClick={() => togglePasswordVisibility(field)}
-                    >
-                      {showPassword[field] ? "Hide" : "Show"}
-                    </span>
-                  </div>
+
+            {["currentPassword", "newPassword", "confirmPassword"].map((field) => (
+              <div key={field} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 capitalize">
+                  {field.replace("Password", " Password")}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword[field] ? "text" : "password"}
+                    name={field}
+                    value={passwordData[field]}
+                    onChange={handlePasswordChange}
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                  />
+                  <span
+                    onClick={() => togglePasswordVisibility(field)}
+                    className="absolute right-3 top-3 cursor-pointer text-sm text-blue-700"
+                  >
+                    {showPassword[field] ? "Hide" : "Show"}
+                  </span>
                 </div>
-              ))}
-              <button
-                onClick={handleChangePassword}
-                disabled={loading}
-                className="mt-4 bg-blue-900 text-white px-4 py-2 rounded"
-              >
-                {loading ? "Changing..." : "Update Password"}
-              </button>
-            </div>
+              </div>
+            ))}
+
+            <button
+              onClick={handleChangePassword}
+              disabled={loading}
+              className="w-full bg-blue-900 text-white px-4 py-2 rounded"
+            >
+              {loading ? "Updating..." : "Update Password"}
+            </button>
           </div>
         )}
       </div>
