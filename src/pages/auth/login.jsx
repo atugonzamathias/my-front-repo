@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -20,7 +20,7 @@ function Login() {
     setError(null);
 
     try {
-      const response = await API.post("api/auth/login/", formData);
+      const response = await API.post("/api/auth/login/", formData);
       const role = response.data.role;
 
       if (role === "student") navigate("/studdash");
@@ -46,9 +46,9 @@ function Login() {
               <label htmlFor="name" className="form-label">User Name</label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
                 placeholder="Enter your User Name"
