@@ -1,7 +1,8 @@
-import API from "../../API";
-import logo from "../../assets/logo.jpg";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import API from "../../API"
+import logo from "../../assets/logo.jpg"
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import getCSRFToken from "./getCSRFToken.jsx";
 
 function Login() {
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
+  useEffect(() => {
+    getCSRFToken();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -21,7 +26,7 @@ function Login() {
 
     try {
       const response = await API.post("/api/auth/login/", formData);
-      const role = response.data.role;
+      const role = response.data.user.role;
 
       if (role === "student") navigate("/studdash");
       else if (role === "lecturer") navigate("/lectdash");
@@ -48,6 +53,8 @@ function Login() {
                 type="text"
                 id="username"
                 name="username"
+                autoComplete="username"
+                autoFocus
                 value={formData.username}
                 onChange={handleChange}
                 required
@@ -62,6 +69,8 @@ function Login() {
                 type="password"
                 id="password"
                 name="password"
+                autoComplete="current-password"
+                autoFocus
                 value={formData.password}
                 onChange={handleChange}
                 required

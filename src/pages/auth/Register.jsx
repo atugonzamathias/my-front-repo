@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../../API";
 import "../../global.css";
+import getCSRFToken from "./getCSRFToken.jsx";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getCSRFToken();
+  }, []);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -58,6 +63,7 @@ export default function RegisterForm() {
         lecturer: "/lectdash",
         registrar: "/regdash",
       };
+
       navigate(redirectMap[formData.role] || "/");
     } catch (err) {
       const message =
@@ -258,4 +264,3 @@ export default function RegisterForm() {
     </div>
   );
 }
-// import React, { useState } from "react";
