@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../../API";
 import "../../global.css";
-import getCSRFToken from "./getCSRFToken.jsx";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getCSRFToken();
-  }, []);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -45,7 +40,7 @@ export default function RegisterForm() {
 
     // Clean up irrelevant fields based on role
     if (formData.role === "student") {
-      delete dataToSend.lecturer_number; // Not used in the form anyway
+      delete dataToSend.lecturer_number;
     } else if (formData.role === "lecturer") {
       delete dataToSend.registration_number;
     } else if (formData.role === "registrar") {
@@ -57,14 +52,14 @@ export default function RegisterForm() {
       const response = await API.post("/api/auth/register/", dataToSend);
       setSuccess(true);
 
-      // Redirect after successful registration
-      const redirectMap = {
-        student: "/studdash",
-        lecturer: "/lectdash",
-        registrar: "/regdash",
-      };
+      // Store email for OTP page (optional but useful)
+      localStorage.setItem("otp_email", formData.email);
 
-      navigate(redirectMap[formData.role] || "/");
+      // Wait a little before redirecting to Login
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      
     } catch (err) {
       const message =
         err.response?.data?.message ||
@@ -131,7 +126,7 @@ export default function RegisterForm() {
 
       {success ? (
         <div className="p-4 bg-green-50 text-green-700 rounded-md">
-          Registration successful! Redirecting...
+          Registration successful! Redirecting to login...
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">

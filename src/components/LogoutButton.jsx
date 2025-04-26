@@ -1,23 +1,13 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import API from "../API"; 
+import { logout } from "../API";  // Import the logout function
 
 function LogoutButton() {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await API.post("/api/logout/", {});
-
-      // Clear stored data
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Redirect to login
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    // Call logout function
+    logout();
   };
 
   return (
@@ -28,3 +18,4 @@ function LogoutButton() {
 }
 
 export default LogoutButton;
+

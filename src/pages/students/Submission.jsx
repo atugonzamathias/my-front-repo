@@ -1,7 +1,7 @@
-import API from "../../API";
-import Wrapper from "../../components/wrapper";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import API from "../../API";
+import Wrapper from '../../components/Wrapper';
 
 const Submission = () => {
   const [formData, setFormData] = useState({
@@ -19,17 +19,13 @@ const Submission = () => {
     lecturer_name: "",
   });
 
-  const [loading, setLoading] = useState(true);  // Track loading state
-  const [error, setError] = useState(null);      // Track any errors
+  const [isSubmitting, setIsSubmitting] = useState(false); // <-- Added
 
-  // Fetch data from backend
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setLoading(true);  // Set loading state to true when starting API call
         const response = await API.get("/api/auth/details/");
         const data = response.data;
-        // Update formData with the fetched details
         setFormData((prevData) => ({
           ...prevData,
           user_number: data.user_number,
@@ -37,16 +33,13 @@ const Submission = () => {
           full_name: data.full_name,
         }));
       } catch (error) {
-        setError("Error fetching user data: " + error.message); // Set error message if something goes wrong
-      } finally {
-        setLoading(false);  // Set loading state to false after the API call is finished
+        console.error("Error fetching user data:", error);
       }
     };
 
     fetchUserData();
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -55,18 +48,18 @@ const Submission = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true); // <-- Start submitting
     try {
-      const response = await API.post("api/issues/", formData);
-
+      const response = await API.post("/api/issues/", formData);
       console.log("Issue submitted successfully:", response.data);
-      setFormData({
-        user_number: formData.user_number, // Keep pre-filled user data
-        registration_number: formData.registration_number,
-        full_name: formData.full_name,
+      alert("Issue submitted successfully!");
+
+      setFormData((prevData) => ({
+        user_number: prevData.user_number,
+        registration_number: prevData.registration_number,
+        full_name: prevData.full_name,
         subject: "",
         course_code: "",
         course_id: "",
@@ -76,85 +69,137 @@ const Submission = () => {
         year_of_study: "",
         semester: "",
         lecturer_name: "",
-      });
-      alert("Issue submitted successfully!");
+      }));
     } catch (error) {
       console.error("Error submitting form:", error.response?.data || error.message);
-      alert("Failed to submit issue: " + (error.response?.data?.message || "Unknown error"));
+      alert(
+        "Failed to submit issue: " +
+          (error.response?.data?.message || "Unknown error")
+      );
+    } finally {
+      setIsSubmitting(false); // <-- Stop submitting
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Display loading message while data is being fetched
-  }
-
-  if (error) {
-    return <div>{error}</div>; // Display error message if there's an issue fetching data
-  }
-
   return (
     <Wrapper>
-      <div className="justify-center items-center bg-gray-100">
-        <div className="bg-white p-4 gap-4 rounded-lg shadow-2xl w-full ">
-          <h2 className="text-center mb-4 font-bold text-blue-400">Issue Form</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-1">
-              <label htmlFor="user_number" className="block mb-2 text-sm text-left font-medium text-gray-600">
-                User Number
+      <div className="flex justify-center items-center bg-gray-100 min-h-screen p-4">
+        <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-2xl">
+          <h2 className="text-center mb-6 text-2xl font-bold text-blue-600">
+            Submit an Issue
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* User Info (auto-filled) */}
+            {[
+              { label: "User Number", id: "user_number" },
+              { label: "Registration Number", id: "registration_number" },
+              { label: "Full Name", id: "full_name" },
+            ].map((field) => (
+              <div key={field.id}>
+                <label
+                  htmlFor={field.id}
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  {field.label}
+                </label>
+                <input
+                  type="text"
+                  id={field.id}
+                  name={field.id}
+                  value={formData[field.id]}
+                  className="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
+                  disabled
+                />
+              </div>
+            ))}
+
+            {/* Other Fields */}
+            {[
+              { label: "Subject", id: "subject", placeholder: "Enter subject" },
+              { label: "Course Code", id: "course_code", placeholder: "Enter course code" },
+              { label: "Course ID", id: "course_id", placeholder: "Enter course ID" },
+              { label: "Category", id: "category", placeholder: "Enter issue category" },
+              { label: "Year of Study", id: "year_of_study", placeholder: "Enter year of study" },
+              { label: "Semester", id: "semester", placeholder: "Enter semester" },
+              { label: "Lecturer Name", id: "lecturer_name", placeholder: "Enter lecturer's name" },
+            ].map((field) => (
+              <div key={field.id}>
+                <label
+                  htmlFor={field.id}
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  {field.label}
+                </label>
+                <input
+                  type="text"
+                  id={field.id}
+                  name={field.id}
+                  value={formData[field.id]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
+                  required
+                />
+              </div>
+            ))}
+
+            {/* Issue Type */}
+            <div>
+              <label
+                htmlFor="issue_type"
+                className="block mb-1 text-sm font-medium text-gray-700"
+              >
+                Issue Type
               </label>
-              <input
-                type="text"
-                id="user_number"
-                name="user_number"
-                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                value={formData.user_number}
-                placeholder="Student number auto filled"
+              <select
+                id="issue_type"
+                name="issue_type"
+                value={formData.issue_type}
                 onChange={handleChange}
-                disabled
-              />
+                className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
+                required
+              >
+                <option value="">Select relevant option</option>
+                <option value="missing_marks">Missing Marks</option>
+                <option value="appeal">Appeal</option>
+                <option value="correction">Correction</option>
+              </select>
             </div>
-            <div className="mb-1">
-              <label htmlFor="registration_number" className="block mb-2 text-sm text-left font-medium text-gray-600">
-                Registration Number
+
+            {/* Description */}
+            <div>
+              <label
+                htmlFor="description"
+                className="block mb-1 text-sm font-medium text-gray-700"
+              >
+                Issue Description
               </label>
-              <input
-                type="text"
-                id="registration_number"
-                name="registration_number"
-                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                value={formData.registration_number}
-                placeholder="Registration number auto filled"
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
-                disabled
-              />
-            </div>
-            <div className="mb-1">
-              <label htmlFor="full_name" className="block mb-2 text-sm text-left font-medium text-gray-600">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                value={formData.full_name}
-                placeholder="Full name auto filled"
-                onChange={handleChange}
-                disabled
+                placeholder="Describe your issue"
+                className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
+                rows="5"
+                required
               />
             </div>
 
-            {/* Other form fields... */}
-
-            <button
-              type="submit"
-              className="text-white mt-4 mb-4 bg-blue-950 w-79 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-400 font-medium rounded-lg text-sm p-2.5 text-center"
-            >
-              S U B M I T
-            </button>
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isSubmitting} // <-- disable when submitting
+                className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg ${
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {isSubmitting ? "Submitting..." : "Submit Issue"}
+              </button>
+            </div>
           </form>
         </div>
-        <div className="hidden md:block bg-blue-300 rounded-lg overflow-hidden"></div>
       </div>
     </Wrapper>
   );

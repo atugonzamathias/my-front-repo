@@ -28,16 +28,16 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        <Route path="studdash/" element={<Dashbord />} />
-        <Route path="login/" element={<Login />} />
-        <Route path="register/" element={<Register />} />
-        <Route path="issues/" element={<Issues />} />
-        <Route path="profile/" element={<Profile />} />
-        <Route path="submission/" element={<Submission />} />
-        <Route path="regdash/" element={<Registrardash />} />
-        <Route path="assign/" element={<Assign />} />
-        <Route path="profsettings/" element={<Profsettings />} />
-        <Route path="selectrole/" element={<Selectrole />} />
+        <Route path="/studdash" element={<Dashbord />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/issues" element={<Issues />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/submission" element={<Submission />} />
+        <Route path="/regdash" element={<Registrardash />} />
+        <Route path="/assign" element={<Assign />} />
+        <Route path="/profsettings" element={<Profsettings />} />
+        <Route path="/selectrole" element={<Selectrole />} />
         <Route path="/" element={<Home />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />

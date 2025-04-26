@@ -1,7 +1,9 @@
 import API from "../../API";
 import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // assuming you use react-router
+import { useNavigate } from "react-router-dom";
+
+const BASE_URL = "http://localhost:8000"; // Adjust if your backend URL is different
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -63,14 +65,15 @@ const ProfilePage = () => {
     try {
       const formDataFile = new FormData();
       formDataFile.append("profile_picture", file);
+
       const response = await API.post(
         "/api/profile/profile-picture/",
         formDataFile,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      setUser((prev) => ({ ...prev, ...response.data }));
+
+      const updatedUser = { ...user, profile_picture: response.data.profile_picture };
+      setUser(updatedUser);
     } catch (err) {
       console.error("Error uploading profile picture:", err);
       setError("Failed to upload profile picture.");
@@ -118,9 +121,9 @@ const ProfilePage = () => {
       setPasswordError("");
       setShowPasswordForm(false);
       setPasswordData({
-        current_password: "",
-        new_password: "",
-        confirm_new_password: "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     } catch (err) {
       setPasswordError(
@@ -138,9 +141,22 @@ const ProfilePage = () => {
     }));
   };
 
+  const getProfilePictureUrl = () => {
+    if (user.profile_picture) {
+      if (user.profile_picture.startsWith("http")) {
+        return user.profile_picture;
+      }
+      return `${BASE_URL}${user.profile_picture}`;
+    }
+    return "/default-profile.png"; // Set your default profile image path if needed
+  };
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-      <div className="mb-4 flex items-center gap-2 cursor-pointer text-blue-900" onClick={() => navigate(-1)}>
+      <div
+        className="mb-4 flex items-center gap-2 cursor-pointer text-blue-900"
+        onClick={() => navigate(-1)}
+      >
         <ArrowLeft size={20} />
         <span className="font-medium">Back</span>
       </div>
@@ -150,21 +166,19 @@ const ProfilePage = () => {
       </div>
 
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-          {error}
-        </div>
+        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
       )}
 
       <div className="flex flex-col items-center mb-6">
         <div className="relative">
           <img
-            src={user.profile_picture || "/default-profile.png"}
+            src={getProfilePictureUrl()}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover mb-4"
           />
           <input
             type="file"
-            accept="image/jpeg, image/png, image/jpg"
+            accept="image/jpeg, image/png"
             onChange={handleProfilePictureChange}
             disabled={loading}
             className="hidden"
@@ -259,9 +273,12 @@ const ProfilePage = () => {
         {showPasswordForm && (
           <div className="mt-6 p-4 bg-gray-50 rounded border">
             <h3 className="text-lg font-medium mb-4">Change Password</h3>
-            {passwordError && <p className="text-red-600 mb-2">{passwordError}</p>}
-            {passwordSuccess && <p className="text-green-600 mb-2">{passwordSuccess}</p>}
-
+            {passwordError && (
+              <p className="text-red-600 mb-2">{passwordError}</p>
+            )}
+            {passwordSuccess && (
+              <p className="text-green-600 mb-2">{passwordSuccess}</p>
+            )}
             {["currentPassword", "newPassword", "confirmPassword"].map((field) => (
               <div key={field} className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 capitalize">
@@ -273,24 +290,24 @@ const ProfilePage = () => {
                     name={field}
                     value={passwordData[field]}
                     onChange={handlePasswordChange}
-                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    className="mt-1 w-full p-2 border border-gray-300 rounded"
                   />
-                  <span
+                  <button
+                    type="button"
                     onClick={() => togglePasswordVisibility(field)}
-                    className="absolute right-3 top-3 cursor-pointer text-sm text-blue-700"
+                    className="absolute right-3 top-2 text-sm text-gray-600"
                   >
                     {showPassword[field] ? "Hide" : "Show"}
-                  </span>
+                  </button>
                 </div>
               </div>
             ))}
-
             <button
               onClick={handleChangePassword}
               disabled={loading}
               className="w-full bg-blue-900 text-white px-4 py-2 rounded"
             >
-              {loading ? "Updating..." : "Update Password"}
+              {loading ? "Changing..." : "Change Password"}
             </button>
           </div>
         )}

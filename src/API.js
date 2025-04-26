@@ -1,15 +1,12 @@
 import axios from "axios";
-import { getCsrfTokenFromCookies } from "./Utils/csrf.jsx"; 
-import { getSessionIdFromCookies } from "./Utils/cookies.jsx";
 
 // Set dynamic base URL
 const baseURL =
-  import.meta.env.MODE === "development" ? import.meta.env.VITE_BASE_URL_DEV : import.meta.env.VITE_BASE_URL_PROD;
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_BASE_URL_DEV
+    : import.meta.env.VITE_BASE_URL_PROD;
 
-console.log(
-  "Base URL being used:",
-  import.meta.env.MODE === "development" ? import.meta.env.VITE_BASE_URL_DEV : import.meta.env.VITE_BASE_URL_PROD
-);
+console.log("Base URL being used:", baseURL);
 
 // Create Axios instance
 const API = axios.create({
@@ -18,33 +15,21 @@ const API = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true, // Include cookies (for CSRF/session-based auth)
 });
 
-// Attach CSRF token, session ID, and Referer to all requests
+// Attach JWT token from localStorage to all requests
 API.interceptors.request.use(
   (config) => {
-    // Get CSRF Token
-    const csrfToken = getCsrfTokenFromCookies();
-    if (csrfToken) {
-      config.headers["X-CSRFToken"] = csrfToken;
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-
-    // Get Session ID
-    const sessionId = getSessionIdFromCookies();
-    if (sessionId) {
-      config.headers["Cookie"] = `csrftoken=${csrfToken}; sessionid=${sessionId}`;
-    }
-
-    // Add Referer Header (Ensure this is correct for your app)
-    //config.headers["Referer"] = "https://aits-alpha.vercel.app"; // Adjust to your frontend URL as needed
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Handle session expiry or unauthorized access
+// Handle unauthorized access or token expiry
 API.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -52,8 +37,8 @@ API.interceptors.response.use(
       const { status } = error.response;
 
       if (status === 401 || status === 403) {
-        console.warn("Session expired or unauthorized. Redirecting to login...");
-        window.location.href = "/login"; // Redirect to login page
+        console.warn("Unauthorized or token expired. Redirecting to login...");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);
@@ -65,8 +50,26 @@ export const debugAPIConfig = () => {
   console.log("Current API Configuration:");
   console.log("Base URL:", baseURL);
   console.log("Environment:", import.meta.env.MODE);
-  console.log("CSRF Token:", getCsrfTokenFromCookies());
-  console.log("Session ID:", getSessionIdFromCookies());
+  console.log("Access Token:", localStorage.getItem("accessToken"));
+};
+
+// Logout function: Remove tokens and redirect to login
+export const logout = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (refreshToken) {
+    try {
+      await API.post("/logout/", { refresh: refreshToken });
+      console.log("Refresh token blacklisted successfully.");
+    } catch (error) {
+      console.error("Failed to blacklist refresh token:", error);
+      // Even if the API fails, still continue to logout
+    }
+  }
+
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  window.location.href = "/login";  // Redirect to login page
 };
 
 export default API;
