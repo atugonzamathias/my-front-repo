@@ -19,6 +19,8 @@ import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import LecturerDashboard from "./pages/lecturer/Lecturerdash.jsx";
 import NotificationsPage from "./pages/NotificationPage.jsx"; 
+import ResolveIssue     from "./pages/lecturer/ResolveIssue";
+
 import './global.css';
 import './index.css';
 
@@ -35,7 +37,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="/profile" element={<Profile />} />
         <Route path="/submission" element={<Submission />} />
         <Route path="/regdash" element={<Registrardash />} />
-        <Route path="/assign" element={<Assign />} />
         <Route path="/profsettings" element={<Profsettings />} />
         <Route path="/selectrole" element={<Selectrole />} />
         <Route path="/" element={<Home />} />
@@ -43,6 +44,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
         <Route path="/lectdash" element={<LecturerDashboard />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/assign/:id" element={<Assign />} />
+        <Route path="/resolve/:id" element={<ResolveIssue />} />
+        
       </Routes>
     </BrowserRouter>
   </StrictMode>

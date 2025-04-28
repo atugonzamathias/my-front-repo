@@ -2,6 +2,7 @@ import API from "../../API";
 import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import BackArrow from '../../components/BackArrow';
 
 const BASE_URL = "http://localhost:8000"; // Adjust if your backend URL is different
 
@@ -153,6 +154,7 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
+      <BackArrow />
       <div
         className="mb-4 flex items-center gap-2 cursor-pointer text-blue-900"
         onClick={() => navigate(-1)}

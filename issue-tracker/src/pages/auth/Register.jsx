@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";  // <-- Import the icons
 import API from "../../API";
 import "../../global.css";
 
@@ -52,14 +53,12 @@ export default function RegisterForm() {
       const response = await API.post("/api/auth/register/", dataToSend);
       setSuccess(true);
 
-      // Store email for OTP page (optional but useful)
       localStorage.setItem("otp_email", formData.email);
 
-      // Wait a little before redirecting to Login
       setTimeout(() => {
         navigate("/login");
       }, 2000);
-      
+
     } catch (err) {
       const message =
         err.response?.data?.message ||
@@ -129,14 +128,14 @@ export default function RegisterForm() {
           Registration successful! Redirecting to login...
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="p-3 text-sm bg-red-50 border border-red-200 text-red-600 rounded-md">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-field">
               <label htmlFor="first_name">First Name</label>
               <input
@@ -146,6 +145,7 @@ export default function RegisterForm() {
                 value={formData.first_name}
                 onChange={handleChange}
                 required
+                className="input-field"
               />
             </div>
 
@@ -158,6 +158,7 @@ export default function RegisterForm() {
                 value={formData.last_name}
                 onChange={handleChange}
                 required
+                className="input-field"
               />
             </div>
           </div>
@@ -171,6 +172,7 @@ export default function RegisterForm() {
               value={formData.username}
               onChange={handleChange}
               required
+              className="input-field"
             />
           </div>
 
@@ -184,6 +186,7 @@ export default function RegisterForm() {
               value={formData.email}
               onChange={handleChange}
               required
+              className="input-field"
             />
           </div>
 
@@ -197,13 +200,18 @@ export default function RegisterForm() {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                className="input-field pr-16"
+                style={{
+                  color: "black", // <-- set password text color black
+                  backgroundColor: "white" // <-- ensure background is visible
+                }}
               />
               <button
                 type="button"
-                className="absolute right-0 top-0 h-full px-3 text-sm text-gray-600"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm text-gray-600"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Eye icon toggle */}
               </button>
             </div>
           </div>
@@ -216,6 +224,7 @@ export default function RegisterForm() {
               value={formData.role}
               onChange={handleChange}
               required
+              className="input-field"
             >
               <option value="" disabled>Select Role</option>
               <option value="student">Student</option>
@@ -234,6 +243,7 @@ export default function RegisterForm() {
               value={formData.college}
               onChange={handleChange}
               required
+              className="input-field"
             >
               <option value="" disabled>Select College</option>
               {colleges.map((college) => (
@@ -250,9 +260,9 @@ export default function RegisterForm() {
             {isSubmitting ? "Registering..." : "Register"}
           </button>
 
-          <div className="flex gap-4">
-            <Link to="/login" className="link">Login</Link>
-            <Link to="/" className="link">SIGN OUT</Link>
+          <div className="flex gap-4 mt-4">
+            <Link to="/login" className="link">Already have an account? Login</Link>
+            <Link to="/" className="link">Home</Link>
           </div>
         </form>
       )}
