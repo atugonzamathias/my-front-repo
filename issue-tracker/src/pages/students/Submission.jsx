@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import API from "../../API";
-import Wrapper from '../../components/Wrapper';
+import Wrapper from '../../components/wrapper';
 
 const Submission = () => {
   const [formData, setFormData] = useState({
